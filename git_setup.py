@@ -42,8 +42,9 @@ def download_git():
         print('Downloading Git...')
 
     print('Finished downloading git!')
+    return installer_file
 
-#TODO
+#TODO function to install git
 def install_git():
     pass
 
@@ -52,7 +53,7 @@ def setup_git():
     if not installed:
         downloaded = check_downloaded(path.expanduser('~/Downloads'))
         if not downloaded:
-            download_git()
+            installer = download_git()
         else:
             pass
             #TODO install_git()
