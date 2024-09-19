@@ -4,27 +4,27 @@ import zipfile
 from platform import system
 #FIXME
 def get_windows_desktop():
-    if path.exists(path.expanduser('~\\OneDrive\\Desktop')):
-        return path.expanduser('~\\OneDrive\\Desktop')
+    if path.exists(path.expanduser('~/OneDrive/Desktop')):
+        return path.expanduser('~/OneDrive/Desktop')
     else:
-        return path.expanduser('~\\Desktop')
+        return path.expanduser('~/Desktop')
 
 def install_blender(zip_url:str = 'https://mirrors.iu13.net/blender/release/Blender4.2/blender-4.2.1-windows-x64.zip'):
     system_name = system()
     print(f'Detected system: {system_name}')
-#TODO make platform specific adjustments
     if system_name == 'Windows':
         desktop_path = get_windows_desktop()
-        logical_and = ';'
     else:
-        desktop_path = path.expanduser('~\\Desktop')
-        logical_and = '&&'
+        desktop_path = path.expanduser('~/Desktop')
     print(f'Desktop path: {desktop_path}')
-#FIXME windows ps script with iwr and OutFile
-    install_command = f'cd {desktop_path} {logical_and} curl {zip_url} --output blender.zip'
+    print(f'Downloading Blender from {zip_url}')
+
+    install_command = f'cd {desktop_path}; iwr {zip_url} --OutFile blender.zip' if system_name == 'Windows' else f'cd {desktop_path}; curl {zip_url} --output blender.zip'
     print(f'Running: {install_command}')
     print('Downloading Blender...')
     subprocess.run([install_command], shell=True, text=True)
+    print('Download complete!')
+
     zip_path = path.join(desktop_path, 'blender.zip')
     print(f'Blender zip path: {zip_path}')
 
@@ -32,15 +32,15 @@ def install_blender(zip_url:str = 'https://mirrors.iu13.net/blender/release/Blen
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(desktop_path)
     if system_name == 'Windows':
-        delete_command = f'cd {path.expanduser('~')}; del blender.zip'
+        delete_command = f'cd ~; del {zip_path}'
         subprocess.run([delete_command])
         print('Cleaning up...')
     elif system_name == 'Linux':
-        delete_command = f'cd {path.expanduser('~')} && rm {zip_path}'
+        delete_command = f'cd ~; rm {zip_path}'
         subprocess.run([delete_command])
         print('Cleaning up...')
     elif system_name == 'Darwin':
-        delete_command = f'cd {path.expanduser('~')} && rm {zip_path}'
+        delete_command = f'cd ~; rm {zip_path}'
         subprocess.run([delete_command])
         print('Cleaning up...')
     else:
